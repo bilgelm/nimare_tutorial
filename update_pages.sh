@@ -39,7 +39,7 @@ done
 # Add Footer to all html-notebooks
 for h in `find docs -maxdepth 2 -name "*html"`
 do
-    gsed -i 's/<\/body>/<\/body><div class="h3" style="right:0;bottom:0;left:0;padding:1rem;text-align:center;"><p style="white-space:pre"><a href="https:\/\/miykael.github.io\/nipype_tutorial\/">Home<\/a>\&emsp;|\&emsp;<a href="https:\/\/github.com\/miykael\/nipype_tutorial">github<\/a>\&emsp;|\&emsp;<a href="http:\/\/nipype.readthedocs.io">Nipype<\/a><\/p><\/div>/' $h
+    gsed -i 's/<\/body>/<\/body><div class="h3" style="right:0;bottom:0;left:0;padding:1rem;text-align:center;"><p style="white-space:pre"><a href="https:\/\/bilgelm.github.io\/nimare_tutorial\/">Home<\/a>\&emsp;|\&emsp;<a href="https:\/\/github.com\/bilgelm\/nimare_tutorial">github<\/a>\&emsp;|\&emsp;<a href="http:\/\/nimare.readthedocs.io">NiMARE<\/a><\/p><\/div>/' $h
 
 done
 
