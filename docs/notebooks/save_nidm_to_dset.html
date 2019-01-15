@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>index</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>save_nidm_to_dset</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11783,154 +11783,29 @@ div#notebook {
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
 
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Save-NIDM-Results-packs-to-NiMARE-dataset">Save NIDM-Results packs to NiMARE dataset<a class="anchor-link" href="#Save-NIDM-Results-packs-to-NiMARE-dataset">&#182;</a></h1>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">html</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="k">import</span> <span class="n">glob</span>
+<span class="kn">import</span> <span class="nn">nibabel</span> <span class="k">as</span> <span class="nn">nib</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">ndimage</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">basename</span><span class="p">,</span> <span class="n">join</span><span class="p">,</span> <span class="n">isfile</span><span class="p">,</span> <span class="n">dirname</span>
 
- &lt;!–– TUTORIAL USERS: PLEASE EXECUTE THIS CELL ––&gt;
-
-&lt;style&gt;.container { width:75% !important; }&lt;/style&gt;
-&lt;link rel=&#39;stylesheet&#39; type=&#39;text/css&#39; href=&#39;static/css/mobile.css&#39;&gt;
-&lt;link rel=&#39;stylesheet&#39; type=&#39;text/css&#39; href=&#39;static/css/homepage.css&#39;&gt;
-        
-&lt;body&gt;
-  &lt;article id=&quot;homepage&quot;&gt;
-    &lt;a id=&quot;library-section&quot;&gt;&lt;/a&gt;
-    &lt;div class=&quot;library-section&quot;&gt;
-      &lt;div class=&quot;section-separator library-section-separator&quot;&gt;
-        &lt;center&gt;&lt;img src=&quot;static/images/logoNiMARE_tutorial.png&quot; width=700&gt;&lt;/center&gt;
-        &lt;p&gt;THIS TUTORIAL IS UNDER CONSTRUCTION&lt;/p&gt;
-        &lt;p&gt;Welcome to the NiMARE Tutorial! It covers the basic concepts and most common use cases of NiMARE and will teach
-            you everything so that you can start creating your own meta-analyses in no time. We recommend that you start with
-            the introduction section to familiarize yourself with the tools used in this tutorial and then move on to the
-            basic concepts section to learn everything you need to know for your everyday life with NiMARE. The workflow
-            examples section shows you a real example of how you can use NiMARE to analyze an actual dataset.
-            &lt;/p&gt;&lt;p&gt;
-            All of the notebooks used in this tutorial can be found on &lt;a href=&quot;https://github.com&quot;&gt;github.com&lt;/a&gt;.
-            But if you want to have the real experience and want to go through the computations by yourself, we highly
-            recommend you to use a Docker container. More about the Docker image that can be used to run the tutorial can be found 
-            &lt;a href=&quot;notebooks/introduction_docker.html&quot;&gt;here&lt;/a&gt;.
-            This docker container gives you the opportunity to adapt the commands to your liking and discover the flexibility and real power of
-            NiMARE yourself.
-            &lt;/p&gt;&lt;p&gt;
-            To run the tutorial locally on your system, we will use a &lt;a href=&quot;http://www.docker.com/&quot;&gt;Docker&lt;/a&gt; container. For this you
-            need to install Docker and download a docker image that provides you a neuroimaging environment based on a NeuroDebian system,
-            with working Python 3 software (including nimare, nibabel, nilearn, numpy, pandas, scipy, seaborn and more).
-            &lt;/p&gt;&lt;p&gt;
-            If you do not want to run the tutorial locally, you can also use 
-            &lt;a href=&quot;https://mybinder.org/v2/gh/neurostuff/NiMARE/master&quot;&gt;Binder service&lt;/a&gt;. 
-            Binder automatically launches the Docker container for you and you have access to all of the notebooks. 
-            Note, that Binder provides between 1G and 4G RAM memory, some notebooks from Workflow Examples might not work. 
-            All notebooks from Introduction and Basic Concepts parts should work.
-           &lt;/p&gt;&lt;p&gt;
-            For everything that isn&#39;t covered in this tutorial, check out the &lt;a href=&quot;http://nimare.readthedocs.io/en/latest/&quot;&gt;main homepage&lt;/a&gt;.
-            &lt;/p&gt;
-      &lt;/div&gt;
-
-      &lt;!--Comment: to change the color of the title or section, change the second h2 class argument and the third div
-            argument to either color01, color02, ... color06 or color07--&gt;
-
-      &lt;!--to change the number of rows per column, change the last number in &#39;pure-u-1-3&#39;.
-       For example, to have three columns, change the value to &#39;pure-u-1-3&#39;--&gt;
-
-      &lt;h2 class=&quot;domain-header color01&quot;&gt;&lt;a class=&quot;domain-title&quot;&gt;Introduction&lt;/a&gt;&lt;/h2&gt;
-      &lt;div class=&quot;pure-g domain-table-container color01&quot;&gt;
-        &lt;a class=&quot;subject-link pure-u-1-3&quot; target=&quot;_blank&quot; href=&quot;notebooks/introduction_nimare.html&quot;&gt;NiMARE&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-3&quot; target=&quot;_blank&quot; href=&quot;notebooks/introduction_showcase.html&quot;&gt;NiMARE Showcase&lt;/a&gt;
-      &lt;/div&gt;
-      &lt;p&gt;This section is meant as a general overview. It should give you a short introduction to the main topics that
-          you need to understand to use NiMARE and this tutorial.&lt;/p&gt;
-
-      &lt;h2 class=&quot;domain-header color02&quot;&gt;&lt;a class=&quot;domain-title&quot;&gt;Basic Concepts&lt;/a&gt;&lt;/h2&gt;
-      &lt;div class=&quot;pure-g domain-table-container color02&quot;&gt;
-        &lt;a class=&quot;subject-link pure-u-1-3&quot; target=&quot;_blank&quot; href=&quot;notebooks/basic_interfaces.html&quot;&gt;Coordinate-based meta-analysis&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-3&quot; target=&quot;_blank&quot; href=&quot;notebooks/basic_nodes.html&quot;&gt;Image-based meta-analysis&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-3&quot; target=&quot;_blank&quot; href=&quot;notebooks/basic_workflow.html&quot;&gt;Automated annotation&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-3&quot; target=&quot;_blank&quot; href=&quot;notebooks/basic_graph_visualization.html&quot;&gt;Database extraction&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-3&quot; target=&quot;_blank&quot; href=&quot;notebooks/basic_data_input.html&quot;&gt;Functional characterization analysis&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-3&quot; target=&quot;_blank&quot; href=&quot;notebooks/basic_data_input_bids.html&quot;&gt;Meta-analytic parcellation&lt;/a&gt;
-      &lt;/div&gt;
-      &lt;p&gt;This section will introduce you to all of the key players in NiMARE. Basic concepts that you need to learn to
-          fully understand and appreciate NiMARE. Once you understand this section, you will know all that you need to know
-          to create any kind of NiMARE workflow.&lt;/p&gt;
-
-      &lt;h2 class=&quot;domain-header color03&quot;&gt;&lt;a class=&quot;domain-title&quot;&gt;Workflow Examples&lt;/a&gt;&lt;/h2&gt;
-      &lt;div class=&quot;pure-g domain-table-container color03&quot;&gt;
-        &lt;a class=&quot;subject-link pure-u-1-2&quot; target=&quot;_blank&quot; href=&quot;notebooks/nidm_pain_meta-analyses.html&quot;&gt;Example: Run meta-analyses on 21 pain studies&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-2&quot; target=&quot;_blank&quot; href=&quot;notebooks/generate_ma_maps.html&quot;&gt;Example: Generate MA maps&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-2&quot; target=&quot;_blank&quot; href=&quot;notebooks/peaks2maps_demo.html&quot;&gt;Example: Peaks to Maps&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-2&quot; target=&quot;_blank&quot; href=&quot;notebooks/save_nidm_to_dset.html&quot;&gt;Example: Save NIDM-Results packs to NiMARE dataset&lt;/a&gt;
-      &lt;/div&gt;
-      &lt;p&gt;In this section, you will find some practical examples and hands-on that show you how to use NiMARE in a &quot;real world&quot; scenario.&lt;/p&gt;
-
-      &lt;h2 class=&quot;domain-header color04&quot;&gt;&lt;a class=&quot;domain-title&quot;&gt;Advanced Concepts&lt;/a&gt;&lt;/h2&gt;
-      &lt;div class=&quot;pure-g domain-table-container color04&quot;&gt;
-        &lt;a class=&quot;subject-link pure-u-1-2&quot; target=&quot;_blank&quot; href=&quot;notebooks/advanced_create_interfaces.html&quot;&gt;Placeholder&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-2&quot; target=&quot;_blank&quot; href=&quot;notebooks/advanced_create_interfaces.html&quot;&gt;Placeholder&lt;/a&gt;
-      &lt;/div&gt;
-      &lt;p&gt;This section is for more advanced users and NiMARE developers.&lt;/p&gt;
-
-      &lt;h2 class=&quot;domain-header color05&quot;&gt;&lt;a class=&quot;domain-title&quot;&gt;Useful Resources &amp; Links&lt;/a&gt;&lt;/h2&gt;
-      &lt;div class=&quot;pure-g domain-table-container color05&quot;&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;notebooks/resources_installation.html&quot;&gt;Install NiMARE&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;https://github.com/neurostuff/NiMARE&quot;&gt;NiMARE (main repository)&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;notebooks/resources_resources.html&quot;&gt;Useful Resources &amp; Links&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;notebooks/resources_help.html&quot;&gt;Where to find Help&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;notebooks/resources_python_cheat_sheet.html&quot;&gt;Python Cheat Sheet&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;http://brainmap.org/sleuth/&quot;&gt;Sleuth&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;http://neurosynth.org/&quot;&gt;Neurosynth&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;https://www.sdmproject.com/&quot;&gt;Seed-based d Mapping (SDM)&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;http://ric.uthscsa.edu/mango/&quot;&gt;Mango&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;http://brainspell.org/&quot;&gt;Brainspell&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;https://metacurious.org/&quot;&gt;metaCurious&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;http://brainmap.org/ale/&quot;&gt;GingerALE&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;http://nidm.nidash.org&quot;&gt;Neuroimaging Data Model (NIDM)&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;https://neurovault.org&quot;&gt;NeuroVault&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;http://obart.brainarchitecture.org/obart/help/&quot;&gt;The Online Brain Atlas Reconciliation Tool (OBART)&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;https://github.com/INCF/HAWG-examples&quot;&gt;The Human Atlasing Working Group (HAWG)&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;http://www.cognitiveatlas.org&quot;&gt;Cognitive Atlas&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;http://www.cogpo.org&quot;&gt;Cognitive Paradigm Ontology (CogPO)&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;http://nipype.readthedocs.io/en/latest/&quot;&gt;Nipype&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;https://github.com/kaczmarj/neurodocker&quot;&gt;Neurodocker&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;http://nipy.org/nibabel/&quot;&gt;NiBabel&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;http://nilearn.github.io/&quot;&gt;Nilearn&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;https://openneuro.org/&quot;&gt;OpenNeuro&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;http://bids-apps.neuroimaging.io&quot;&gt;BIDS Apps&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;http://fmriprep.readthedocs.io/en/latest/index.html&quot;&gt;fmriprep&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;https://mriqc.readthedocs.io/en/latest/#&quot;&gt;MRIQC&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;https://www.mindboggle.info/&quot;&gt;Mindboggle&lt;/a&gt;
-        &lt;a class=&quot;subject-link pure-u-1-4&quot; target=&quot;_blank&quot; href=&quot;https://timvanmourik.github.io/Porcupine/&quot;&gt;PORcupine&lt;/a&gt;
-      &lt;/div&gt;
-      &lt;p&gt;This section will give you helpful links and resources so that you always know where to go to learn more.&lt;/p&gt;
-
-    &lt;/div&gt;
-  &lt;/article&gt;
-&lt;/body&gt;
-
-&lt;!--The following code will cause the code cell to disappear--&gt;
-
-&lt;script&gt;
-code_show=true; 
-function code_toggle() {
- if (code_show){
- $(&#39;div.input&#39;).hide();
- } else {
- $(&#39;div.input&#39;).show();
- }
- code_show = !code_show
-} 
-$( document ).ready(code_toggle);
-&lt;/script&gt;
-
-&lt;hr/&gt;
-
-&lt;h2&gt;You want to help with this tutorial?&lt;/h2&gt;
-&lt;p&gt;Find the github repo of this tutorial under &lt;a href=&quot;https://github.com/miykael/nipype_tutorial&quot;&gt;https://github.com/miykael/nipype_tutorial&lt;/a&gt;.
-    Feel free to send a pull request or leave an &lt;a href=&quot;https://github.com/miykael/nipype_tutorial/issues&quot;&gt;issue&lt;/a&gt; with your feedback or ideas.
-&lt;/p&gt;
+<span class="kn">import</span> <span class="nn">nimare</span>
 </pre></div>
 
 </div>
@@ -11944,154 +11819,285 @@ $( document ).ready(code_toggle);
 <div class="output_area">
 <div class="prompt"></div>
 
-
-<div class="output_html rendered_html output_subarea ">
-
- <!–– TUTORIAL USERS: PLEASE EXECUTE THIS CELL ––>
-
-<style>.container { width:75% !important; }</style>
-<link rel='stylesheet' type='text/css' href='static/css/mobile.css'>
-<link rel='stylesheet' type='text/css' href='static/css/homepage.css'>
-        
-<body>
-  <article id="homepage">
-    <a id="library-section"></a>
-    <div class="library-section">
-      <div class="section-separator library-section-separator">
-        <center><img src="static/images/logoNiMARE_tutorial.png" width=700></center>
-        <p>THIS TUTORIAL IS UNDER CONSTRUCTION</p>
-        <p>Welcome to the NiMARE Tutorial! It covers the basic concepts and most common use cases of NiMARE and will teach
-            you everything so that you can start creating your own meta-analyses in no time. We recommend that you start with
-            the introduction section to familiarize yourself with the tools used in this tutorial and then move on to the
-            basic concepts section to learn everything you need to know for your everyday life with NiMARE. The workflow
-            examples section shows you a real example of how you can use NiMARE to analyze an actual dataset.
-            </p><p>
-            All of the notebooks used in this tutorial can be found on <a href="https://github.com">github.com</a>.
-            But if you want to have the real experience and want to go through the computations by yourself, we highly
-            recommend you to use a Docker container. More about the Docker image that can be used to run the tutorial can be found 
-            <a href="notebooks/introduction_docker.html">here</a>.
-            This docker container gives you the opportunity to adapt the commands to your liking and discover the flexibility and real power of
-            NiMARE yourself.
-            </p><p>
-            To run the tutorial locally on your system, we will use a <a href="http://www.docker.com/">Docker</a> container. For this you
-            need to install Docker and download a docker image that provides you a neuroimaging environment based on a NeuroDebian system,
-            with working Python 3 software (including nimare, nibabel, nilearn, numpy, pandas, scipy, seaborn and more).
-            </p><p>
-            If you do not want to run the tutorial locally, you can also use 
-            <a href="https://mybinder.org/v2/gh/neurostuff/NiMARE/master">Binder service</a>. 
-            Binder automatically launches the Docker container for you and you have access to all of the notebooks. 
-            Note, that Binder provides between 1G and 4G RAM memory, some notebooks from Workflow Examples might not work. 
-            All notebooks from Introduction and Basic Concepts parts should work.
-           </p><p>
-            For everything that isn't covered in this tutorial, check out the <a href="http://nimare.readthedocs.io/en/latest/">main homepage</a>.
-            </p>
-      </div>
-
-      <!--Comment: to change the color of the title or section, change the second h2 class argument and the third div
-            argument to either color01, color02, ... color06 or color07-->
-
-      <!--to change the number of rows per column, change the last number in 'pure-u-1-3'.
-       For example, to have three columns, change the value to 'pure-u-1-3'-->
-
-      <h2 class="domain-header color01"><a class="domain-title">Introduction</a></h2>
-      <div class="pure-g domain-table-container color01">
-        <a class="subject-link pure-u-1-3" target="_blank" href="notebooks/introduction_nimare.html">NiMARE</a>
-        <a class="subject-link pure-u-1-3" target="_blank" href="notebooks/introduction_showcase.html">NiMARE Showcase</a>
-      </div>
-      <p>This section is meant as a general overview. It should give you a short introduction to the main topics that
-          you need to understand to use NiMARE and this tutorial.</p>
-
-      <h2 class="domain-header color02"><a class="domain-title">Basic Concepts</a></h2>
-      <div class="pure-g domain-table-container color02">
-        <a class="subject-link pure-u-1-3" target="_blank" href="notebooks/basic_interfaces.html">Coordinate-based meta-analysis</a>
-        <a class="subject-link pure-u-1-3" target="_blank" href="notebooks/basic_nodes.html">Image-based meta-analysis</a>
-        <a class="subject-link pure-u-1-3" target="_blank" href="notebooks/basic_workflow.html">Automated annotation</a>
-        <a class="subject-link pure-u-1-3" target="_blank" href="notebooks/basic_graph_visualization.html">Database extraction</a>
-        <a class="subject-link pure-u-1-3" target="_blank" href="notebooks/basic_data_input.html">Functional characterization analysis</a>
-        <a class="subject-link pure-u-1-3" target="_blank" href="notebooks/basic_data_input_bids.html">Meta-analytic parcellation</a>
-      </div>
-      <p>This section will introduce you to all of the key players in NiMARE. Basic concepts that you need to learn to
-          fully understand and appreciate NiMARE. Once you understand this section, you will know all that you need to know
-          to create any kind of NiMARE workflow.</p>
-
-      <h2 class="domain-header color03"><a class="domain-title">Workflow Examples</a></h2>
-      <div class="pure-g domain-table-container color03">
-        <a class="subject-link pure-u-1-2" target="_blank" href="notebooks/nidm_pain_meta-analyses.html">Example: Run meta-analyses on 21 pain studies</a>
-        <a class="subject-link pure-u-1-2" target="_blank" href="notebooks/generate_ma_maps.html">Example: Generate MA maps</a>
-        <a class="subject-link pure-u-1-2" target="_blank" href="notebooks/peaks2maps_demo.html">Example: Peaks to Maps</a>
-        <a class="subject-link pure-u-1-2" target="_blank" href="notebooks/save_nidm_to_dset.html">Example: Save NIDM-Results packs to NiMARE dataset</a>
-      </div>
-      <p>In this section, you will find some practical examples and hands-on that show you how to use NiMARE in a "real world" scenario.</p>
-
-      <h2 class="domain-header color04"><a class="domain-title">Advanced Concepts</a></h2>
-      <div class="pure-g domain-table-container color04">
-        <a class="subject-link pure-u-1-2" target="_blank" href="notebooks/advanced_create_interfaces.html">Placeholder</a>
-        <a class="subject-link pure-u-1-2" target="_blank" href="notebooks/advanced_create_interfaces.html">Placeholder</a>
-      </div>
-      <p>This section is for more advanced users and NiMARE developers.</p>
-
-      <h2 class="domain-header color05"><a class="domain-title">Useful Resources & Links</a></h2>
-      <div class="pure-g domain-table-container color05">
-        <a class="subject-link pure-u-1-4" target="_blank" href="notebooks/resources_installation.html">Install NiMARE</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="https://github.com/neurostuff/NiMARE">NiMARE (main repository)</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="notebooks/resources_resources.html">Useful Resources & Links</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="notebooks/resources_help.html">Where to find Help</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="notebooks/resources_python_cheat_sheet.html">Python Cheat Sheet</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="http://brainmap.org/sleuth/">Sleuth</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="http://neurosynth.org/">Neurosynth</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="https://www.sdmproject.com/">Seed-based d Mapping (SDM)</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="http://ric.uthscsa.edu/mango/">Mango</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="http://brainspell.org/">Brainspell</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="https://metacurious.org/">metaCurious</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="http://brainmap.org/ale/">GingerALE</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="http://nidm.nidash.org">Neuroimaging Data Model (NIDM)</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="https://neurovault.org">NeuroVault</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="http://obart.brainarchitecture.org/obart/help/">The Online Brain Atlas Reconciliation Tool (OBART)</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="https://github.com/INCF/HAWG-examples">The Human Atlasing Working Group (HAWG)</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="http://www.cognitiveatlas.org">Cognitive Atlas</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="http://www.cogpo.org">Cognitive Paradigm Ontology (CogPO)</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="http://nipype.readthedocs.io/en/latest/">Nipype</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="https://github.com/kaczmarj/neurodocker">Neurodocker</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="http://nipy.org/nibabel/">NiBabel</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="http://nilearn.github.io/">Nilearn</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="https://openneuro.org/">OpenNeuro</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="http://bids-apps.neuroimaging.io">BIDS Apps</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="http://fmriprep.readthedocs.io/en/latest/index.html">fmriprep</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="https://mriqc.readthedocs.io/en/latest/#">MRIQC</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="https://www.mindboggle.info/">Mindboggle</a>
-        <a class="subject-link pure-u-1-4" target="_blank" href="https://timvanmourik.github.io/Porcupine/">PORcupine</a>
-      </div>
-      <p>This section will give you helpful links and resources so that you always know where to go to learn more.</p>
-
-    </div>
-  </article>
-</body><div class="h3" style="right:0;bottom:0;left:0;padding:1rem;text-align:center;"><p style="white-space:pre"><a href="https://miykael.github.io/nipype_tutorial/">Home</a>&emsp;|&emsp;<a href="https://github.com/miykael/nipype_tutorial">github</a>&emsp;|&emsp;<a href="http://nipype.readthedocs.io">Nipype</a></p></div>
-
-<!--The following code will cause the code cell to disappear-->
-
-<script>
-code_show=true; 
-function code_toggle() {
- if (code_show){
- $('div.input').hide();
- } else {
- $('div.input').show();
- }
- code_show = !code_show
-} 
-$( document ).ready(code_toggle);
-</script>
-
-<hr/>
-
-<h2>You want to help with this tutorial?</h2>
-<p>Find the github repo of this tutorial under <a href="https://github.com/miykael/nipype_tutorial">https://github.com/miykael/nipype_tutorial</a>.
-    Feel free to send a pull request or leave an <a href="https://github.com/miykael/nipype_tutorial/issues">issue</a> with your feedback or ideas.
-</p>
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/home/james/.conda/envs/nimare_dev/lib/python3.7/site-packages/duecredit-0.6.4-py3.7.egg/duecredit/utils.py:32: DeprecationWarning: dist() and linux_distribution() functions are deprecated in Python 3.5
+  and platform.linux_distribution()[0] == &#39;debian&#39; \
+/home/james/.conda/envs/nimare_dev/lib/python3.7/site-packages/duecredit-0.6.4-py3.7.egg/duecredit/io.py:18: DeprecationWarning: Using or importing the ABCs from &#39;collections&#39; instead of from &#39;collections.abc&#39; is deprecated, and in 3.8 it will stop working
+  from collections import defaultdict, Iterator
+/home/james/.conda/envs/nimare_dev/lib/python3.7/site-packages/nipype-1.1.7-py3.7.egg/nipype/interfaces/base/traits_extension.py:28: DeprecationWarning: Using or importing the ABCs from &#39;collections&#39; instead of from &#39;collections.abc&#39; is deprecated, and in 3.8 it will stop working
+  from collections import Sequence
+/home/james/.conda/envs/nimare_dev/lib/python3.7/site-packages/nltk/decorators.py:68: DeprecationWarning: `formatargspec` is deprecated since Python 3.5. Use `signature` and the `Signature` object directly
+  regargs, varargs, varkwargs, defaults, formatvalue=lambda value: &#34;&#34;
+/home/james/.conda/envs/nimare_dev/lib/python3.7/importlib/_bootstrap.py:219: ImportWarning: can&#39;t resolve package from __spec__ or __package__, falling back on __name__ and __path__
+  return f(*args, **kwds)
+/home/james/.conda/envs/nimare_dev/lib/python3.7/site-packages/fuzzywuzzy/fuzz.py:11: UserWarning: Using slow pure-python SequenceMatcher. Install python-Levenshtein to remove this warning
+  warnings.warn(&#39;Using slow pure-python SequenceMatcher. Install python-Levenshtein to remove this warning&#39;)
+</pre>
+</div>
 </div>
 
 </div>
+</div>
 
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">_local_max</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">affine</span><span class="p">,</span> <span class="n">min_distance</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Find all local maxima of the array, separated by at least min_distance.</span>
+<span class="sd">    Adapted from https://stackoverflow.com/a/22631583/2589328</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : array_like</span>
+<span class="sd">        3D array of with masked values for cluster.</span>
+<span class="sd">    min_distance : :obj:`int`</span>
+<span class="sd">        Minimum distance between local maxima in ``data``, in terms of mm.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ijk : :obj:`numpy.ndarray`</span>
+<span class="sd">        (n_foci, 3) array of local maxima indices for cluster.</span>
+<span class="sd">    vals : :obj:`numpy.ndarray`</span>
+<span class="sd">        (n_foci,) array of values from data at ijk.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Initial identification of subpeaks with minimal minimum distance</span>
+    <span class="n">data_max</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">maximum_filter</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">maxima</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span> <span class="o">==</span> <span class="n">data_max</span><span class="p">)</span>
+    <span class="n">data_min</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">minimum_filter</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="p">((</span><span class="n">data_max</span> <span class="o">-</span> <span class="n">data_min</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">maxima</span><span class="p">[</span><span class="n">diff</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">labeled</span><span class="p">,</span> <span class="n">n_subpeaks</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="n">maxima</span><span class="p">)</span>
+    <span class="n">ijk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ndimage</span><span class="o">.</span><span class="n">center_of_mass</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">labeled</span><span class="p">,</span>
+                                          <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_subpeaks</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)))</span>
+    <span class="n">ijk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">ijk</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="n">vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="n">arr</span><span class="o">=</span><span class="n">ijk</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">func1d</span><span class="o">=</span><span class="n">_get_val</span><span class="p">,</span>
+                               <span class="n">input_arr</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="c1"># Sort subpeaks in cluster in descending order of stat value</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">vals</span><span class="p">)</span><span class="o">.</span><span class="n">argsort</span><span class="p">()</span>
+    <span class="n">vals</span> <span class="o">=</span> <span class="n">vals</span><span class="p">[</span><span class="n">order</span><span class="p">]</span>
+    <span class="n">ijk</span> <span class="o">=</span> <span class="n">ijk</span><span class="p">[</span><span class="n">order</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">xyz</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">affines</span><span class="o">.</span><span class="n">apply_affine</span><span class="p">(</span><span class="n">affine</span><span class="p">,</span> <span class="n">ijk</span><span class="p">)</span>  <span class="c1"># Convert to xyz in mm</span>
+
+    <span class="c1"># Reduce list of subpeaks based on distance</span>
+    <span class="n">keep_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">xyz</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">xyz</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">xyz</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">keep_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">xyz</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">xyz</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="p">:])</span>
+                <span class="n">keep_idx</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">dist</span> <span class="o">&gt;</span> <span class="n">min_distance</span>
+    <span class="n">ijk</span> <span class="o">=</span> <span class="n">ijk</span><span class="p">[</span><span class="n">keep_idx</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">vals</span> <span class="o">=</span> <span class="n">vals</span><span class="p">[</span><span class="n">keep_idx</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">ijk</span><span class="p">,</span> <span class="n">vals</span>
+
+
+<span class="k">def</span> <span class="nf">_get_val</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">input_arr</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Small function for extracting values from array based on index.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">row</span>
+    <span class="k">return</span> <span class="n">input_arr</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">f1</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">nimare</span><span class="o">.</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;tests&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;nidm_pain_dset.json&#39;</span><span class="p">)</span>
+<span class="n">f2</span> <span class="o">=</span> <span class="s1">&#39;nidm_pain_dset_with_subpeaks.json&#39;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ddict</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">folders</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;/Users/tsalo/Downloads/nidm-pain-results/pain_*.nidm&#39;</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">folders</span><span class="p">:</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">basename</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">][</span><span class="s1">&#39;1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">][</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="s1">&#39;coords&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">][</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="s1">&#39;coords&#39;</span><span class="p">][</span><span class="s1">&#39;space&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;MNI&#39;</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">][</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="s1">&#39;images&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">][</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="s1">&#39;space&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;MNI_2mm&#39;</span>
+    <span class="c1"># con file</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;Contrast*.nii.gz&#39;</span><span class="p">))</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span> <span class="k">if</span> <span class="s1">&#39;StandardError&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">basename</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">files</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">files</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">][</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="s1">&#39;con&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span>
+    <span class="c1"># se file</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;ContrastStandardError*.nii.gz&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">files</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">files</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">][</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="s1">&#39;se&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span>
+    <span class="c1"># z file</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;ZStatistic*.nii.gz&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">files</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">files</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">][</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="s1">&#39;z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span>
+    <span class="c1"># t file</span>
+    <span class="c1"># z file</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;TStatistic*.nii.gz&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">files</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">files</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">][</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="s1">&#39;t&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span>
+    <span class="c1"># sample size</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;DesignMatrix.csv&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">isfile</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">][</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="s1">&#39;sample_sizes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span>
+    <span class="c1"># foci</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;ExcursionSet*.nii.gz&#39;</span><span class="p">))</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">files</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">get_data</span><span class="p">())</span>
+    <span class="c1"># positive clusters</span>
+    <span class="n">binarized</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">binarized</span><span class="p">[</span><span class="n">binarized</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">binarized</span><span class="p">[</span><span class="n">binarized</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">binarized</span> <span class="o">=</span> <span class="n">binarized</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">labeled</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">measurements</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="n">binarized</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">clust_ids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labeled</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]))</span>
+    <span class="n">ijk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">data</span> <span class="o">*</span> <span class="p">(</span><span class="n">labeled</span> <span class="o">==</span> <span class="n">c</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">data</span> <span class="o">*</span> <span class="p">(</span><span class="n">labeled</span> <span class="o">==</span> <span class="n">c</span><span class="p">)))</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">clust_ids</span><span class="p">])</span>
+    <span class="n">ijk</span> <span class="o">=</span> <span class="n">ijk</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">xyz</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">affines</span><span class="o">.</span><span class="n">apply_affine</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">affine</span><span class="p">,</span> <span class="n">ijk</span><span class="p">)</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">][</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="s1">&#39;coords&#39;</span><span class="p">][</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">xyz</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">][</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="s1">&#39;coords&#39;</span><span class="p">][</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">xyz</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">][</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="s1">&#39;coords&#39;</span><span class="p">][</span><span class="s1">&#39;z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">xyz</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">])</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">:</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">ddict</span><span class="p">,</span> <span class="n">fo</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ddict</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">folders</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;/Users/tsalo/Downloads/nidm-pain-results/pain_*.nidm&#39;</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">folders</span><span class="p">:</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">basename</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">][</span><span class="s1">&#39;1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">][</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="s1">&#39;coords&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">][</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="s1">&#39;coords&#39;</span><span class="p">][</span><span class="s1">&#39;space&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;MNI&#39;</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">][</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="s1">&#39;images&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">][</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="s1">&#39;space&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;MNI_2mm&#39;</span>
+    <span class="c1"># con file</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;Contrast*.nii.gz&#39;</span><span class="p">))</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span> <span class="k">if</span> <span class="s1">&#39;StandardError&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">basename</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">files</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">files</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">][</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="s1">&#39;con&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span>
+    <span class="c1"># se file</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;ContrastStandardError*.nii.gz&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">files</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">files</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">][</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="s1">&#39;se&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span>
+    <span class="c1"># z file</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;ZStatistic*.nii.gz&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">files</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">files</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">][</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="s1">&#39;z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span>
+    <span class="c1"># t file</span>
+    <span class="c1"># z file</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;TStatistic*.nii.gz&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">files</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">files</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">][</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="s1">&#39;t&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span>
+    <span class="c1"># sample size</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;DesignMatrix.csv&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">isfile</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">][</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="s1">&#39;sample_sizes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span>
+    <span class="c1"># foci</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;ExcursionSet*.nii.gz&#39;</span><span class="p">))</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">files</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">get_data</span><span class="p">())</span>
+    <span class="c1"># positive clusters</span>
+    <span class="n">binarized</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">binarized</span><span class="p">[</span><span class="n">binarized</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">binarized</span><span class="p">[</span><span class="n">binarized</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">binarized</span> <span class="o">=</span> <span class="n">binarized</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">labeled</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">measurements</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="n">binarized</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">clust_ids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labeled</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]))</span>
+    
+    <span class="n">peak_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">data</span> <span class="o">*</span> <span class="p">(</span><span class="n">labeled</span> <span class="o">==</span> <span class="n">c</span><span class="p">))</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">clust_ids</span><span class="p">])</span>
+    <span class="n">clust_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">clust_ids</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">(</span><span class="o">-</span><span class="n">peak_vals</span><span class="p">)</span><span class="o">.</span><span class="n">argsort</span><span class="p">()]</span>  <span class="c1"># Sort by descending max value</span>
+
+    <span class="n">ijk</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">c_id</span><span class="p">,</span> <span class="n">c_val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">clust_ids</span><span class="p">):</span>
+        <span class="n">cluster_mask</span> <span class="o">=</span> <span class="n">labeled</span> <span class="o">==</span> <span class="n">c_val</span>
+        <span class="n">masked_data</span> <span class="o">=</span> <span class="n">data</span> <span class="o">*</span> <span class="n">cluster_mask</span>
+
+        <span class="c1"># Get peaks, subpeaks and associated statistics</span>
+        <span class="n">subpeak_ijk</span><span class="p">,</span> <span class="n">subpeak_vals</span> <span class="o">=</span> <span class="n">_local_max</span><span class="p">(</span><span class="n">masked_data</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">affine</span><span class="p">,</span>
+                                               <span class="n">min_distance</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+        <span class="c1"># Only report peak and, at most, top 3 subpeaks.</span>
+        <span class="n">n_subpeaks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">subpeak_vals</span><span class="p">),</span> <span class="mi">4</span><span class="p">))</span>
+        <span class="c1">#n_subpeaks = len(subpeak_vals)</span>
+        <span class="n">subpeak_ijk</span> <span class="o">=</span> <span class="n">subpeak_ijk</span><span class="p">[:</span><span class="n">n_subpeaks</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">ijk</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subpeak_ijk</span><span class="p">)</span>
+    <span class="n">ijk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">ijk</span><span class="p">)</span>
+    <span class="n">xyz</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">affines</span><span class="o">.</span><span class="n">apply_affine</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">affine</span><span class="p">,</span> <span class="n">ijk</span><span class="p">)</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">][</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="s1">&#39;coords&#39;</span><span class="p">][</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">xyz</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">][</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="s1">&#39;coords&#39;</span><span class="p">][</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">xyz</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">ddict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;contrasts&#39;</span><span class="p">][</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="s1">&#39;coords&#39;</span><span class="p">][</span><span class="s1">&#39;z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">xyz</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">])</span>
+
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">f2</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">:</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">ddict</span><span class="p">,</span> <span class="n">fo</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+
+</div>
 </div>
 </div>
 
