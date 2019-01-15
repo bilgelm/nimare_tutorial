@@ -30,8 +30,7 @@ sed -i '' '/Show HTML code/d' docs/index.html
 # Add Google Analytics script to each homepage
 for h in `find docs -maxdepth 2 -name "*html"`
 do
-    sed '/<\/head>/ {r static/template_google_analytics.rst
-    d}' $h > tmp.rst
+    sed '/<\/head>/ {r static/template_google_analytics.rst d}' $h > tmp.rst
 
     mv tmp.rst $h
 done
