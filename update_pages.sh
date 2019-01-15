@@ -8,7 +8,7 @@ while true; do
 TIMESTAMP=`date +'%Y-%m-%d %H:%M:%S'`
 
 # Clean out .ipynb_checkpoints in folder structure
-rm -rf `find -name ".ipynb_checkpoints"`
+rm -rf `find . -name ".ipynb_checkpoints"`
 
 # Reset the counts of all notebook cells
 find . -type f -name "*.ipynb" \
